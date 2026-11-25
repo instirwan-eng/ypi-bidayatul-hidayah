@@ -4906,6 +4906,9 @@ Topik / Materi: [ISI TOPIK]`;
               oninput="window.ExamModule.updateFilter('recapMaxNilai', this.value)" />
           </div>
           <div class="toolbar-right">
+            <button class="btn btn-danger btn-sm" onclick="window.ExamModule.resetAllRecap()">
+              <i data-lucide="rotate-ccw"></i> Reset Semua Nilai (Kembali Nol)
+            </button>
             <button class="btn btn-outline btn-sm" onclick="window.ExamModule.exportRecapExcel()">
               <i data-lucide="download"></i> Export Excel
             </button>
@@ -4971,6 +4974,18 @@ Topik / Materi: [ISI TOPIK]`;
         method: "POST",
         body: { exam_id: examId, student_id: studentId },
       });
+      window.App.toast(res.message);
+      await loadGuruData();
+      render();
+    } catch (err) {
+      window.App.toast(err.message, "error");
+    }
+  }
+
+  async function resetAllRecap() {
+    if (!confirm("Peringatan! Anda yakin ingin me-reset SEMUA nilai siswa kembali ke nol? Semua riwayat ujian akan dikosongkan dan ujian dapat dikerjakan ulang.")) return;
+    try {
+      const res = await window.App.api("/api/guru/reset-recap", { method: "POST" });
       window.App.toast(res.message);
       await loadGuruData();
       render();
@@ -5877,6 +5892,7 @@ Topik / Materi: [ISI TOPIK]`;
     previewJsonQuestions,
     deleteExam,
     unlockStudentAccess,
+    resetAllRecap,
     exportRecapExcel,
     deleteStudent,
     requestAccess,
@@ -6730,6 +6746,12 @@ window.App = (() => {
         };
       });
       return { attempts, access_list };
+    }
+    if (url === '/api/guru/reset-recap' && method === 'POST') {
+      db.attempts = [];
+      db.exam_access = [];
+      window.YpiCloudDB.mutate();
+      return { message: "Semua riwayat nilai berhasil direset ke nol dan akses ujian dibuka kembali." };
     }
     if (url.startsWith('/api/siswa/recap')) {
       const u = window.App.getUser();
