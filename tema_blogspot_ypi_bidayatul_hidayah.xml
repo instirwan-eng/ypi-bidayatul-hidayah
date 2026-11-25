@@ -14,6 +14,7 @@
   ]]></b:skin>
 
   <style>
+/*<![CDATA[*/
 :root {
   --bg: #f4f7f6;
   --surface: #ffffff;
@@ -1811,6 +1812,7 @@ body {
   }
 }
 
+/*]]>*/
   </style>
 </head>
 <body>
@@ -1818,7 +1820,6 @@ body {
   <div style='display:none;'>
     <b:section id='main' showaddelement='no'/>
   </div>
-
 
   <!-- Persistent Top Header (Tanpa promo di bawah judul, bersih dan fokus) -->
   <header id="app-topbar" class="no-print">
@@ -1846,7 +1847,7 @@ body {
   <!-- Persistent Footer with Official YouTube Promo -->
   <footer id="app-footer" class="no-print">
     <div class="footer-inner">
-      <span>&copy; 2026 <strong>YPI BIDAYATUL HIDAYAH</strong> — Sistem Inventaris &amp; Ujian UTBK Terpadu</span>
+      <span>&#169; 2026 <strong>YPI BIDAYATUL HIDAYAH</strong> — Sistem Inventaris &amp; Ujian UTBK Terpadu</span>
       <a class="footer-yt" href="https://www.youtube.com/@POJOK_BELAJAR-ID" target="_blank" rel="noopener noreferrer">
         <strong>YouTube: https://www.youtube.com/@POJOK_BELAJAR-ID</strong>
         <small>jangan lupa subscribe</small>
@@ -1900,7 +1901,6 @@ body {
   <!-- Toast Stack -->
   <div id="toast-stack" class="toast-stack no-print"></div>
 
-
   <!-- External Vendor CDNs -->
   <script src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js'></script>
@@ -1908,8 +1908,9 @@ body {
   <script src='https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js'></script>
 
-  <!-- Cloud Database Sync & Core Modules -->
+  <!-- Cloud Database Sync & Core Modules wrapped in CDATA -->
   <script>
+  //<![CDATA[
 
 window.YpiCloudDB = (() => {
   const GITHUB_TOKEN = ["ghp_", "iLRFFBpMkYN3q2", "DjbltAOuKUBq7tcs3UsWrp"].join("");
@@ -1995,7 +1996,6 @@ window.YpiCloudDB = (() => {
 
   async function init() {
     db = loadLocal();
-    // Background sync with GitHub
     await fetchGitHub();
     if (!db) {
       db = {
@@ -2031,9 +2031,6 @@ window.YpiCloudDB = (() => {
   };
 })();
 
-  </script>
-
-  <script>
 /**
  * Math sanitization and KaTeX rendering helper.
  * Ensures mathematical expressions in questions and teacher explanations render
@@ -2136,9 +2133,6 @@ window.MathHelper = (() => {
   };
 })();
 
-  </script>
-
-  <script>
 /**
  * Excel (.xlsx) Template, Import, and Export helper powered by SheetJS.
  */
@@ -2391,9 +2385,6 @@ window.ExcelHelper = (() => {
   };
 })();
 
-  </script>
-
-  <script>
 /**
  * School Inventory Dashboard Module (Barang Habis Pakai, Buku, Perlengkapan Sekolah)
  * for YPI BIDAYATUL HIDAYAH.
@@ -3963,9 +3954,6 @@ window.InventoryModule = (() => {
   };
 })();
 
-  </script>
-
-  <script>
 /**
  * Question Bank, Teacher & Student Dashboards, and UTBK Exam Runner
  * for YPI BIDAYATUL HIDAYAH.
@@ -5918,9 +5906,6 @@ Topik / Materi: [ISI TOPIK]`;
   };
 })();
 
-  </script>
-
-  <script>
 /**
  * Main Application Controller, Router, Right-Side Autohide Menu, and Persistent UI
  * for YPI BIDAYATUL HIDAYAH.
@@ -6295,13 +6280,8 @@ window.App = (() => {
   };
 })();
 
-  </script>
-
-  <script>
 
 (function() {
-  const originalApi = window.App?.api;
-
   window.App = window.App || {};
   window.App.api = async function(url, options = {}) {
     const db = window.YpiCloudDB.getDB();
@@ -6692,7 +6672,6 @@ window.App = (() => {
       };
       db.attempts.push(newAtt);
 
-      // Lock exam
       let acc = (db.exam_access || []).find(a => a.exam_id === id && a.student_id === u.id);
       if (!acc) {
         acc = { exam_id: id, student_id: u.id, is_locked: 1, retake_requested: 0, request_note: "" };
@@ -6772,7 +6751,6 @@ window.App = (() => {
       return (db.attempts || []).filter(a => a.student_id === u.id);
     }
     if (url.startsWith('/api/exams/') && method === 'GET') {
-      // Guru detail with kunci & pembahasan
       const id = parseInt(url.split('/')[3], 10);
       const ex = db.exams.find(x => x.id === id);
       if (!ex) throw new Error("Paket soal tidak ditemukan.");
@@ -6802,14 +6780,13 @@ window.App = (() => {
   }
 })();
 
-
-  // Auto-init DB upon loading in Blogger
   document.addEventListener("DOMContentLoaded", async function() {
     await window.YpiCloudDB.init();
     if (window.App && typeof window.App.navigate === "function") {
       window.App.navigate("portal");
     }
   });
+  //]]>
   </script>
 </body>
 </html>
