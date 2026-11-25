@@ -1812,6 +1812,56 @@ body {
   }
 }
 
+/* Question Images Styling */
+.q-img-wrap {
+  display: block;
+  text-align: center;
+  margin: 0.85rem auto;
+  max-width: 100%;
+}
+
+.q-img {
+  max-width: 100%;
+  max-height: 420px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  background-color: #f8fafc;
+  padding: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  cursor: zoom-in;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: inline-block;
+}
+
+.q-img:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="dark"] .q-img {
+  background-color: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+  .q-img {
+    max-height: 280px;
+  }
+}
+
+@media print {
+  .q-img {
+    max-height: 220px;
+    box-shadow: none;
+    border: 1px solid #cbd5e1;
+    page-break-inside: avoid;
+  }
+}
+
 /*]]>*/
   </style>
 </head>
@@ -2068,7 +2118,9 @@ window.MathHelper = (() => {
   }
 
   /**
-   * Formats plain text with linebreaks while protecting math delimiters ($...$ and $$...$$).
+   * Formats plain text with linebreaks and images while protecting math delimiters ($...$ and $$...$$).
+   * Supports Markdown images: ![alt](url)
+   * Supports HTML images: <img src="..." />
    */
   function formatSafeHtml(raw) {
     const normalized = normalizeMathText(raw);
@@ -2082,11 +2134,38 @@ window.MathHelper = (() => {
         if (part.startsWith("$") && part.endsWith("$")) {
           return `<span class="math-inline">${escapeHtml(part)}</span>`;
         }
-        // Keep intentional <strong> tags created from **...**, escape everything else
-        const safe = escapeHtml(part)
+        // Safely extract images (Markdown and HTML) before escaping HTML
+        const imgMap = [];
+        let safe = part;
+
+        // 1. Detect Markdown images: ![alt](url)
+        safe = safe.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (m, alt, src) => {
+          const cleanSrc = src.trim();
+          const cleanAlt = alt ? alt.trim() : "Gambar Soal";
+          imgMap.push(
+            `<div class="q-img-wrap"><img src="${cleanSrc}" alt="${escapeHtml(cleanAlt)}" title="${escapeHtml(cleanAlt)}" class="q-img" loading="lazy" onclick="window.MathHelper.zoomImage(this.src)" /></div>`
+          );
+          return `___IMG_PLACEHOLDER_${imgMap.length - 1}___`;
+        });
+
+        // 2. Detect HTML img tags: <img ... src="..." ...>
+        safe = safe.replace(/<img\s+[^>]*?src=["']([^"']+)["'][^>]*\/?>/gi, (m, src) => {
+          const cleanSrc = src.trim();
+          imgMap.push(
+            `<div class="q-img-wrap"><img src="${cleanSrc}" alt="Gambar Soal" title="Klik untuk perbesar" class="q-img" loading="lazy" onclick="window.MathHelper.zoomImage(this.src)" /></div>`
+          );
+          return `___IMG_PLACEHOLDER_${imgMap.length - 1}___`;
+        });
+
+        safe = escapeHtml(safe)
           .replace(/&lt;strong&gt;/g, "<strong>")
           .replace(/&lt;\/strong&gt;/g, "</strong>")
           .replace(/\n/g, "<br>");
+
+        imgMap.forEach((imgHtml, idx) => {
+          safe = safe.replace(`___IMG_PLACEHOLDER_${idx}___`, imgHtml);
+        });
+
         return safe;
       })
       .join("");
@@ -2125,12 +2204,24 @@ window.MathHelper = (() => {
     renderElement(container);
   }
 
+  function zoomImage(src) {
+    if (!src) return;
+    if (window.App && typeof window.App.openModal === "function") {
+      window.App.openModal(
+        "Tampilan Gambar Soal",
+        `<div style="text-align:center;"><img src="${escapeHtml(src)}" style="max-width:100%; max-height:80vh; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15);" /></div>`,
+        "modal-lg"
+      );
+    }
+  }
+
   return {
     escapeHtml,
     formatSafeHtml,
     renderElement,
     setMathHtml,
     renderAllIn,
+    zoomImage,
   };
 })();
 
@@ -4148,17 +4239,18 @@ window.ExamModule = (() => {
   const AI_JSON_PROMPT = `Buatkan soal pilihan ganda format UTBK dalam format JSON murni (tanpa teks tambahan di luar JSON).
 Aturan penting:
 1. Semua rumus matematika wajib menggunakan format LaTeX yang rapi di dalam tanda $...$ (inline) atau $$...$$ (blok), jangan gunakan simbol aneh seperti ^ mentah di luar LaTeX atau karakter rusak.
-2. Kembalikan array JSON dengan struktur persis seperti berikut:
+2. Jika ada gambar ilustrasi/grafik/diagram, sisipkan dengan format markdown ![Keterangan](URL_GAMBAR) atau tag <img src="URL_GAMBAR" /> langsung di dalam teks pertanyaan atau pembahasan.
+3. Kembalikan array JSON dengan struktur persis seperti berikut:
 [
   {
-    "pertanyaan": "Jika $f(x) = 2x^2 - 4x + 5$, maka nilai minimum $f(x)$ adalah ...",
+    "pertanyaan": "Perhatikan grafik fungsi kuadrat berikut:\\n\\n![Grafik Parabola](https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600)\\n\\nJika fungsi tersebut memiliki titik puncak di $(1, 3)$, maka nilai minimum dari $f(x)$ adalah ...",
     "opsi_a": "$1$",
     "opsi_b": "$2$",
     "opsi_c": "$3$",
     "opsi_d": "$4$",
     "opsi_e": "$5$",
     "kunci_jawaban": "C",
-    "pembahasan": "Nilai sumbu simetri $x_p = -\\\\frac{-4}{2(2)} = 1$. Maka $f(1) = 2(1)^2 - 4(1) + 5 = 3$."
+    "pembahasan": "Berdasarkan grafik, titik puncak $(x_p, y_p) = (1, 3)$. Karena parabola terbuka ke atas, nilai minimum fungsi adalah ordinat titik puncak yaitu $y = 3$."
   }
 ]
 Jumlah soal: [ISI JUMLAH SOAL, misal 25]
@@ -4170,7 +4262,7 @@ Topik / Materi: [ISI TOPIK]`;
     [
       {
         pertanyaan:
-          "Diketahui persamaan kuadrat $x^2 - 5x + 6 = 0$ memiliki akar-akar $x_1$ dan $x_2$. Nilai dari $x_1^2 + x_2^2$ adalah ...",
+          "Perhatikan gambar ilustrasi geometri berikut:\n\n![Segitiga Siku-siku](https://images.unsplash.com/photo-1509228468518-180dd4864904?w=600)\n\nDiketahui persamaan kuadrat $x^2 - 5x + 6 = 0$ memiliki akar-akar $x_1$ dan $x_2$. Nilai dari $x_1^2 + x_2^2$ adalah ...",
         opsi_a: "$11$",
         opsi_b: "$12$",
         opsi_c: "$13$",
@@ -4713,11 +4805,16 @@ Topik / Materi: [ISI TOPIK]`;
           <div class="prompt-helper-box">
             <div class="prompt-helper-head">
               <strong><i data-lucide="sparkles"></i> Prompt AI Siap Pakai (ChatGPT / Gemini)</strong>
-              <button type="button" class="btn btn-amber btn-sm" onclick="window.ExamModule.copyAiPrompt()">
-                <i data-lucide="copy"></i> Salin Prompt JSON
-              </button>
+              <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+                <button type="button" class="btn btn-outline btn-xs" onclick="window.ExamModule.openImageHelper()">
+                  <i data-lucide="image"></i> Cara Sisipkan Gambar
+                </button>
+                <button type="button" class="btn btn-amber btn-sm" onclick="window.ExamModule.copyAiPrompt()">
+                  <i data-lucide="copy"></i> Salin Prompt JSON
+                </button>
+              </div>
             </div>
-            <p class="muted">Salin prompt ini ke AI agar menghasilkan JSON soal dengan format LaTeX matematika yang rapi & pembahasan lengkap.</p>
+            <p class="muted">Salin prompt ini ke AI agar menghasilkan JSON soal dengan rumus matematika KaTeX rapi, pembahasan lengkap, serta gambar ilustrasi/grafik.</p>
           </div>
 
           <form id="exam-json-form" class="form-grid" style="margin-top:1rem;">
@@ -4785,6 +4882,36 @@ Topik / Materi: [ISI TOPIK]`;
         </div>
       </div>
     `;
+  }
+
+  function openImageHelper() {
+    window.App.openModal(
+      "Petunjuk Menyisipkan Gambar pada Soal & Pembahasan",
+      `
+      <div style="line-height:1.6; font-size:0.92rem;">
+        <p>Anda dapat menyisipkan gambar (grafik, peta, diagram geometri, dll.) langsung ke dalam teks pertanyaan atau pembahasan dengan 2 format mudah:</p>
+        
+        <div style="background:#f1f5f9; padding:0.85rem; border-radius:8px; margin:0.75rem 0;">
+          <strong>1. Format Markdown (Sangat Direkomendasikan):</strong><br />
+          <code>![Deskripsi Gambar](https://url-gambar-anda.com/gambar.png)</code>
+        </div>
+
+        <div style="background:#f1f5f9; padding:0.85rem; border-radius:8px; margin:0.75rem 0;">
+          <strong>2. Format Tag HTML Image:</strong><br />
+          <code>&lt;img src="https://url-gambar-anda.com/gambar.png" /&gt;</code>
+        </div>
+
+        <p><strong>Contoh di JSON:</strong></p>
+        <pre style="background:#1e293b; color:#f8fafc; padding:0.75rem; border-radius:8px; font-size:0.82rem; overflow-x:auto;">{
+  "pertanyaan": "Perhatikan diagram rangkaian listrik berikut:\\n\\n![Rangkaian Listrik](https://contoh.com/gambar1.png)\\n\\nBesar kuat arus total adalah ...",
+  "opsi_a": "$2\\\\text{ A}$",
+  "opsi_b": "$4\\\\text{ A}$",
+  ...
+}</pre>
+        <p class="muted"><i data-lucide="info"></i> Gambar yang disisipkan akan otomatis tampil rapi, responsif (menyesuaikan lebar layar HP/Laptop), dan dapat diklik untuk diperbesar (zoom).</p>
+      </div>
+      `
+    );
   }
 
   function copyAiPrompt() {
@@ -6014,6 +6141,7 @@ Topik / Materi: [ISI TOPIK]`;
     viewExamPembahasan,
     startNewJsonExam,
     editExamJson,
+    openImageHelper,
     copyAiPrompt,
     fillSampleJson,
     loadJsonFile,
