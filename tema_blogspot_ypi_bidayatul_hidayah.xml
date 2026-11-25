@@ -2000,10 +2000,11 @@ window.YpiCloudDB = (() => {
     if (!db) {
       db = {
         users: [
-          { id: 1, username: "guru", password: "guru123", role: "guru", full_name: "Irwan Iswandi", kelas: null },
-          { id: 2, username: "siswa1", password: "siswa123", role: "siswa", full_name: "Ahmad Zaki Pratama", kelas: 12 },
-          { id: 3, username: "siswa2", password: "siswa123", role: "siswa", full_name: "Siti Nurhaliza", kelas: 12 },
-          { id: 4, username: "siswa3", password: "siswa123", role: "siswa", full_name: "Muhammad Rizky", kelas: 10 }
+          { id: 1, username: "admin", password: "admin123", role: "admin", full_name: "Administrator Inventaris", kelas: null },
+          { id: 2, username: "guru", password: "guru123", role: "guru", full_name: "Irwan Iswandi", kelas: null },
+          { id: 3, username: "siswa1", password: "siswa123", role: "siswa", full_name: "Ahmad Zaki Pratama", kelas: 12 },
+          { id: 4, username: "siswa2", password: "siswa123", role: "siswa", full_name: "Siti Nurhaliza", kelas: 12 },
+          { id: 5, username: "siswa3", password: "siswa123", role: "siswa", full_name: "Muhammad Rizky", kelas: 10 }
         ],
         consumables: [],
         consumable_logs: [],
@@ -2393,7 +2394,7 @@ window.InventoryModule = (() => {
   const { escapeHtml } = window.MathHelper;
 
   let state = {
-    tab: "overview", // overview | consumables | books | equipment
+    tab: "overview", // overview | consumables | books | equipment | ubah-password
     subTab: {
       consumables: "data", // data | recap
       books: "data",
@@ -2475,6 +2476,11 @@ window.InventoryModule = (() => {
   // -------------------------------------------------------------------------
 
   async function initAndRender(subSection) {
+    const user = window.App.getUser();
+    if (!user || user.role !== "admin") {
+      renderAdminLogin();
+      return;
+    }
     if (subSection) state.tab = subSection;
     const container = document.getElementById("main-content");
     container.innerHTML = `<div class="loading-box">Memuat data inventaris sekolah...</div>`;
@@ -2486,6 +2492,69 @@ window.InventoryModule = (() => {
     }
   }
 
+  function renderAdminLogin() {
+    const container = document.getElementById("main-content");
+    if (!container) return;
+    container.innerHTML = `
+      <div class="login-wrapper">
+        <div class="login-card">
+          <div class="login-brand">
+            <div class="brand-badge"><i data-lucide="shield-check"></i></div>
+            <div>
+              <span class="eyebrow">IRWAN APPS • INVENTARIS</span>
+              <h2>Login Admin Inventaris</h2>
+            </div>
+          </div>
+          <p class="muted" style="margin-bottom:1rem;">Khusus petugas dan pengelola sarana prasarana sekolah untuk mengelola barang habis pakai, buku, dan perlengkapan.</p>
+          <form id="admin-login-form" class="login-form">
+            <div class="form-group">
+              <label>Username Admin</label>
+              <input name="username" required autocomplete="username" placeholder="Masukkan username admin" />
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" name="password" required autocomplete="current-password" placeholder="Masukkan password admin" />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+              <i data-lucide="log-in"></i> Masuk sebagai Admin Inventaris
+            </button>
+          </form>
+          <div style="margin-top:1.25rem; text-align:center;">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="window.App.navigate('exam-portal')">
+              <i data-lucide="graduation-cap"></i> Menuju Portal Soal &amp; UTBK
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    if (window.lucide) window.lucide.createIcons();
+    bindAdminLogin();
+  }
+
+  function bindAdminLogin() {
+    const form = document.getElementById("admin-login-form");
+    if (!form) return;
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      try {
+        const res = await window.App.api("/api/auth/login", {
+          method: "POST",
+          body: {
+            username: fd.get("username"),
+            password: fd.get("password"),
+            expected_role: "admin",
+          },
+        });
+        window.App.setSession(res.token, res.user);
+        window.App.toast(`Selamat datang, ${res.user.full_name}!`);
+        await initAndRender();
+      } catch (err) {
+        window.App.toast(err.message, "error");
+      }
+    };
+  }
+
   function render() {
     const container = document.getElementById("main-content");
     if (!container) return;
@@ -2495,6 +2564,7 @@ window.InventoryModule = (() => {
       { id: "consumables", label: "Barang Habis Pakai", icon: "package-open" },
       { id: "books", label: "Inventaris Buku", icon: "book-open" },
       { id: "equipment", label: "Perlengkapan Sekolah", icon: "armchair" },
+      { id: "ubah-password", label: "Ubah Password Admin", icon: "key-round" },
     ];
 
     let bodyHtml = "";
@@ -2502,6 +2572,7 @@ window.InventoryModule = (() => {
     else if (state.tab === "consumables") bodyHtml = renderConsumables();
     else if (state.tab === "books") bodyHtml = renderBooks();
     else if (state.tab === "equipment") bodyHtml = renderEquipment();
+    else if (state.tab === "ubah-password") bodyHtml = renderAdminPassword();
 
     container.innerHTML = `
       <div class="dashboard-header">
@@ -2537,6 +2608,8 @@ window.InventoryModule = (() => {
     if (window.lucide) window.lucide.createIcons();
     if (state.tab === "overview") {
       renderOverviewChart();
+    } else if (state.tab === "ubah-password") {
+      bindAdminPasswordForm();
     }
   }
 
@@ -2620,6 +2693,61 @@ window.InventoryModule = (() => {
         </div>
       </div>
     `;
+  }
+
+  function renderAdminPassword() {
+    return `
+      <div class="card" style="max-width:520px; margin: 0 auto;">
+        <div class="card-header">
+          <h3><i data-lucide="key-round"></i> Ubah Password Admin Inventaris</h3>
+        </div>
+        <form id="admin-password-form" class="form-grid">
+          <div class="form-group col-span-2">
+            <label>Password Lama *</label>
+            <input type="password" name="old_password" required placeholder="Masukkan password lama" />
+          </div>
+          <div class="form-group col-span-2">
+            <label>Password Baru (min. 4 karakter) *</label>
+            <input type="password" name="new_password" required minlength="4" placeholder="Masukkan password baru" />
+          </div>
+          <div class="form-group col-span-2">
+            <label>Konfirmasi Password Baru *</label>
+            <input type="password" name="confirm_password" required minlength="4" placeholder="Ulangi password baru" />
+          </div>
+          <div class="modal-actions col-span-2">
+            <button type="submit" class="btn btn-primary btn-block">
+              <i data-lucide="save"></i> Simpan Password Baru
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
+  }
+
+  function bindAdminPasswordForm() {
+    const form = document.getElementById("admin-password-form");
+    if (!form) return;
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      if (fd.get("new_password") !== fd.get("confirm_password")) {
+        window.App.toast("Konfirmasi password baru tidak cocok.", "error");
+        return;
+      }
+      try {
+        const res = await window.App.api("/api/auth/change-password", {
+          method: "POST",
+          body: {
+            old_password: fd.get("old_password"),
+            new_password: fd.get("new_password"),
+          },
+        });
+        window.App.toast(res.message);
+        form.reset();
+      } catch (err) {
+        window.App.toast(err.message, "error");
+      }
+    };
   }
 
   function renderOverviewChart() {
@@ -6159,6 +6287,7 @@ window.App = (() => {
         { label: "Barang Habis Pakai", icon: "package-open", action: "window.InventoryModule.setTab('consumables')", active: t === "consumables" },
         { label: "Inventaris Buku (Kls 1–12)", icon: "book-open", action: "window.InventoryModule.setTab('books')", active: t === "books" },
         { label: "Perlengkapan Sekolah", icon: "armchair", action: "window.InventoryModule.setTab('equipment')", active: t === "equipment" },
+        { label: "Ubah Password Admin", icon: "key-round", action: "window.InventoryModule.setTab('ubah-password')", active: t === "ubah-password" },
       ];
     } else if (currentPage === "exam-portal") {
       contextItems = window.ExamModule.getContextMenuItems();
@@ -6199,7 +6328,7 @@ window.App = (() => {
         <div class="drawer-divider"></div>
         <div class="drawer-user-box">
           <strong>${escapeHtml(currentUser.full_name)}</strong>
-          <small>${currentUser.role === "guru" ? "Akun Guru" : `Siswa Kelas ${currentUser.kelas}`}</small>
+          <small>${currentUser.role === "admin" ? "Admin Inventaris" : (currentUser.role === "guru" ? "Akun Guru" : `Siswa Kelas ${currentUser.kelas}`)}</small>
           <button class="btn btn-danger btn-xs btn-block" style="margin-top:0.5rem;" onclick="window.App.logout()">
             <i data-lucide="log-out"></i> Keluar
           </button>
@@ -6216,11 +6345,13 @@ window.App = (() => {
     const slot = document.getElementById("topbar-user-slot");
     if (!slot) return;
     if (currentUser) {
+      const roleLabel = currentUser.role === "admin" ? "Admin" : (currentUser.role === "guru" ? "Guru" : `Kls ${currentUser.kelas}`);
+      const icon = currentUser.role === "admin" ? "shield-check" : (currentUser.role === "guru" ? "user-check" : "user");
       slot.innerHTML = `
         <span class="user-pill">
-          <i data-lucide="${currentUser.role === "guru" ? "user-check" : "user"}"></i>
+          <i data-lucide="${icon}"></i>
           <span>${escapeHtml(currentUser.full_name)}</span>
-          <small>(${currentUser.role === "guru" ? "Guru" : `Kls ${currentUser.kelas}`})</small>
+          <small>(${roleLabel})</small>
         </span>
       `;
     } else {
@@ -6294,7 +6425,8 @@ window.App = (() => {
       const user = db.users.find(u => u.username === body.username && u.password === body.password);
       if (!user) throw new Error("Username atau password salah.");
       if (body.expected_role && user.role !== body.expected_role) {
-        throw new Error(`Akun ini bukan akun ${body.expected_role === 'guru' ? 'Guru' : 'Siswa'}.`);
+        const rName = body.expected_role === 'admin' ? 'Admin' : (body.expected_role === 'guru' ? 'Guru' : 'Siswa');
+        throw new Error(`Akun ini bukan akun ${rName}.`);
       }
       return {
         token: "tok_" + user.id + "_" + Date.now(),
