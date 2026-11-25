@@ -1828,7 +1828,7 @@ body {
         <i data-lucide="landmark"></i>
       </div>
       <div>
-        <div class="school-name">YPI BIDAYATUL HIDAYAH</div>
+        <div class="school-name">IRWAN APPS</div>
         <div class="school-tagline">Inventaris Sekolah &amp; Ujian Sistem UTBK</div>
       </div>
     </div>
@@ -1847,7 +1847,7 @@ body {
   <!-- Persistent Footer with Official YouTube Promo -->
   <footer id="app-footer" class="no-print">
     <div class="footer-inner">
-      <span>&#169; 2026 <strong>YPI BIDAYATUL HIDAYAH</strong> — Sistem Inventaris &amp; Ujian UTBK Terpadu</span>
+      <span>&#169; 2026 <strong>IRWAN APPS</strong> — Sistem Inventaris &amp; Ujian UTBK Terpadu</span>
       <a class="footer-yt" href="https://www.youtube.com/@POJOK_BELAJAR-ID" target="_blank" rel="noopener noreferrer">
         <strong>YouTube: https://www.youtube.com/@POJOK_BELAJAR-ID</strong>
         <small>jangan lupa subscribe</small>
@@ -1969,7 +1969,7 @@ window.YpiCloudDB = (() => {
         const jsonStr = JSON.stringify(db, null, 2);
         const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
         const body = {
-          message: "Sync YPI Bidayatul Hidayah Database from Blogspot",
+          message: "Sync Irwan Apps Database from Blogspot",
           content: encoded
         };
         if (fileSha) body.sha = fileSha;
@@ -2000,7 +2000,7 @@ window.YpiCloudDB = (() => {
     if (!db) {
       db = {
         users: [
-          { id: 1, username: "guru", password: "guru123", role: "guru", full_name: "Ust. H. Ahmad Fauzi, S.Pd.", kelas: null },
+          { id: 1, username: "guru", password: "guru123", role: "guru", full_name: "Irwan Iswandi", kelas: null },
           { id: 2, username: "siswa1", password: "siswa123", role: "siswa", full_name: "Ahmad Zaki Pratama", kelas: 12 },
           { id: 3, username: "siswa2", password: "siswa123", role: "siswa", full_name: "Siti Nurhaliza", kelas: 12 },
           { id: 4, username: "siswa3", password: "siswa123", role: "siswa", full_name: "Muhammad Rizky", kelas: 10 }
@@ -2182,13 +2182,13 @@ window.ExcelHelper = (() => {
       ];
       sample = ["Kertas F4 70gr", "Rim", "ATK", 15, 10, 5, 5, "Lemari TU"];
       notes = [
-        ["PETUNJUK PENGISIAN TEMPLATE BARANG HABIS PAKAI - YPI BIDAYATUL HIDAYAH"],
+        ["PETUNJUK PENGISIAN TEMPLATE BARANG HABIS PAKAI - IRWAN APPS"],
         ["1. Jangan ubah baris header pada sheet Data."],
         ["2. Jumlah Barang Awal, Barang Masuk, Barang yang Dipakai, dan Batas Menipis diisi angka (>= 0)."],
         ["3. Sisa Barang dan Status (Aman / Menipis / Habis) dihitung otomatis oleh sistem."],
         ["4. Contoh Kategori: ATK, Kebersihan, Kesehatan / UKS, Laboratorium, Lainnya."],
       ];
-      filename = "Template_Barang_Habis_Pakai_YPI_BH.xlsx";
+      filename = "Template_Barang_Habis_Pakai_IRWAN_APPS.xlsx";
     } else if (type === "books") {
       headers = [
         "Nama Barang (Judul Buku)",
@@ -2219,14 +2219,14 @@ window.ExcelHelper = (() => {
         "Rak A3 Perpustakaan",
       ];
       notes = [
-        ["PETUNJUK PENGISIAN TEMPLATE BUKU - YPI BIDAYATUL HIDAYAH"],
+        ["PETUNJUK PENGISIAN TEMPLATE BUKU - IRWAN APPS"],
         ["1. Kategori Buku tersedia 2 pilihan: 'Buku Pelajaran Utama' atau 'Buku Pelajaran Penunjang'."],
         ["2. Jenjang Kelas diisi angka 1 sampai 12."],
         ["3. Format tanggal gunakan YYYY-MM-DD (contoh: 2026-11-25)."],
         ["4. Kelayakan diisi 'Layak' atau 'Tidak Layak'."],
         ["5. Sisa Buku dihitung otomatis: Jumlah Masuk - Jumlah Keluar + Jumlah Dikembalikan."],
       ];
-      filename = "Template_Inventaris_Buku_YPI_BH.xlsx";
+      filename = "Template_Inventaris_Buku_IRWAN_APPS.xlsx";
     } else if (type === "equipment") {
       headers = [
         "Nama Barang",
@@ -2249,12 +2249,12 @@ window.ExcelHelper = (() => {
         "Ruang Kelas 8A",
       ];
       notes = [
-        ["PETUNJUK PENGISIAN TEMPLATE PERLENGKAPAN SEKOLAH - YPI BIDAYATUL HIDAYAH"],
+        ["PETUNJUK PENGISIAN TEMPLATE PERLENGKAPAN SEKOLAH - IRWAN APPS"],
         ["1. Kelayakan diisi salah satu: 'Layak', 'Rusak', atau 'Perlu Perbaikan'."],
         ["2. Status diisi salah satu: 'Ada', 'Sedang Diperbaiki', atau 'Hilang'."],
         ["3. Sisa Stok dihitung otomatis: Stok Awal + Stok Masuk - Stok Keluar."],
       ];
-      filename = "Template_Perlengkapan_Sekolah_YPI_BH.xlsx";
+      filename = "Template_Perlengkapan_Sekolah_IRWAN_APPS.xlsx";
     }
 
     const wsData = window.XLSX.utils.aoa_to_sheet([headers, sample]);
@@ -2387,7 +2387,7 @@ window.ExcelHelper = (() => {
 
 /**
  * School Inventory Dashboard Module (Barang Habis Pakai, Buku, Perlengkapan Sekolah)
- * for YPI BIDAYATUL HIDAYAH.
+ * for IRWAN APPS.
  */
 window.InventoryModule = (() => {
   const { escapeHtml } = window.MathHelper;
@@ -2508,7 +2508,7 @@ window.InventoryModule = (() => {
         <div>
           <span class="eyebrow">SISTEM SARANA & PRASARANA</span>
           <h1>Dashboard Inventaris Sekolah</h1>
-          <p class="subtitle">Pengelolaan barang habis pakai, buku pelajaran kelas 1–12, dan perlengkapan YPI BIDAYATUL HIDAYAH.</p>
+          <p class="subtitle">Pengelolaan barang habis pakai, buku pelajaran kelas 1–12, dan perlengkapan IRWAN APPS.</p>
         </div>
         <div class="header-actions no-print">
           <button class="btn btn-outline" onclick="window.App.navigate('exam-portal')">
@@ -3250,7 +3250,7 @@ window.InventoryModule = (() => {
     return `
       <div class="print-only print-header">
         <div class="print-kop">
-          <h2>YPI BIDAYATUL HIDAYAH</h2>
+          <h2>IRWAN APPS</h2>
           <p>SISTEM INVENTARIS SARANA & PRASARANA SEKOLAH</p>
           <hr />
           <h3>${escapeHtml(title)}</h3>
@@ -3884,7 +3884,7 @@ window.InventoryModule = (() => {
         { key: "lokasi_barang", label: "Lokasi Barang" },
       ],
       "Barang Habis Pakai",
-      "Export_Barang_Habis_Pakai_YPI_BH.xlsx"
+      "Export_Barang_Habis_Pakai_IRWAN_APPS.xlsx"
     );
   }
 
@@ -3907,7 +3907,7 @@ window.InventoryModule = (() => {
         { key: "lokasi_buku", label: "Lokasi Buku" },
       ],
       "Inventaris Buku",
-      "Export_Inventaris_Buku_YPI_BH.xlsx"
+      "Export_Inventaris_Buku_IRWAN_APPS.xlsx"
     );
   }
 
@@ -3926,7 +3926,7 @@ window.InventoryModule = (() => {
         { key: "lokasi_barang", label: "Lokasi Barang" },
       ],
       "Perlengkapan Sekolah",
-      "Export_Perlengkapan_Sekolah_YPI_BH.xlsx"
+      "Export_Perlengkapan_Sekolah_IRWAN_APPS.xlsx"
     );
   }
 
@@ -3956,7 +3956,7 @@ window.InventoryModule = (() => {
 
 /**
  * Question Bank, Teacher & Student Dashboards, and UTBK Exam Runner
- * for YPI BIDAYATUL HIDAYAH.
+ * for IRWAN APPS.
  */
 window.ExamModule = (() => {
   const { escapeHtml, setMathHtml, renderAllIn } = window.MathHelper;
@@ -4170,7 +4170,7 @@ Topik / Materi: [ISI TOPIK]`;
           <div class="login-brand">
             <div class="brand-badge"><i data-lucide="graduation-cap"></i></div>
             <div>
-              <span class="eyebrow">YPI BIDAYATUL HIDAYAH</span>
+              <span class="eyebrow">IRWAN APPS</span>
               <h2>Portal Inventaris Soal & Ujian UTBK</h2>
             </div>
           </div>
@@ -4290,7 +4290,7 @@ Topik / Materi: [ISI TOPIK]`;
     return `
       <div class="dashboard-header">
         <div>
-          <span class="eyebrow">PORTAL GURU • YPI BIDAYATUL HIDAYAH</span>
+          <span class="eyebrow">PORTAL GURU • IRWAN APPS</span>
           <h1>Dashboard Inventaris Soal & Ujian</h1>
           <p class="subtitle">Masuk sebagai <strong>${escapeHtml(user.full_name)}</strong> (${escapeHtml(user.username)})</p>
         </div>
@@ -5008,7 +5008,7 @@ Topik / Materi: [ISI TOPIK]`;
         { key: "submitted_at", label: "Waktu Submit" },
       ],
       "Rekapitulasi Nilai",
-      "Rekap_Nilai_Siswa_YPI_BH.xlsx"
+      "Rekap_Nilai_Siswa_IRWAN_APPS.xlsx"
     );
   }
 
@@ -5274,7 +5274,7 @@ Topik / Materi: [ISI TOPIK]`;
     return `
       <div class="dashboard-header">
         <div>
-          <span class="eyebrow">PORTAL SISWA • YPI BIDAYATUL HIDAYAH</span>
+          <span class="eyebrow">PORTAL SISWA • IRWAN APPS</span>
           <h1>Dashboard Ujian & Perkembangan Belajar</h1>
           <p class="subtitle">Siswa: <strong>${escapeHtml(user.full_name)}</strong> • Kelas ${user.kelas}</p>
         </div>
@@ -5817,7 +5817,7 @@ Topik / Materi: [ISI TOPIK]`;
           <div class="result-badge ${r.nilai >= 75 ? "res-good" : "res-mid"}">
             <i data-lucide="award"></i>
           </div>
-          <span class="eyebrow">HASIL UJIAN UTBK • YPI BIDAYATUL HIDAYAH</span>
+          <span class="eyebrow">HASIL UJIAN UTBK • IRWAN APPS</span>
           <h2>${escapeHtml(r.exam_judul)}</h2>
           <p class="muted">${escapeHtml(r.pelajaran)} • Kelas ${r.kelas}</p>
 
@@ -5908,7 +5908,7 @@ Topik / Materi: [ISI TOPIK]`;
 
 /**
  * Main Application Controller, Router, Right-Side Autohide Menu, and Persistent UI
- * for YPI BIDAYATUL HIDAYAH.
+ * for IRWAN APPS.
  */
 window.App = (() => {
   const { escapeHtml } = window.MathHelper;
@@ -6039,7 +6039,7 @@ window.App = (() => {
       <section class="hero-portal">
         <div class="hero-content">
           <span class="hero-pill"><i data-lucide="school"></i> SISTEM INFORMASI TERPADU SEKOLAH</span>
-          <h1>YPI BIDAYATUL HIDAYAH</h1>
+          <h1>IRWAN APPS</h1>
           <p class="hero-desc">
             Platform digital terpadu untuk pengelolaan <strong>Inventaris Barang Sekolah</strong> (Barang Habis Pakai, Buku Kelas 1–12, Perlengkapan) serta <strong>Inventaris Soal & Ujian Sistem UTBK</strong> bagi Guru dan Siswa.
           </p>
@@ -6166,7 +6166,7 @@ window.App = (() => {
     navBody.innerHTML = `
       <div class="drawer-section-label">DASHBOARD UTAMA</div>
       <button class="drawer-item ${currentPage === "portal" ? "active" : ""}" onclick="window.App.navigate('portal')">
-        <i data-lucide="home"></i> <span>Beranda YPI Bidayatul Hidayah</span>
+        <i data-lucide="home"></i> <span>Beranda Irwan Apps</span>
       </button>
       <button class="drawer-item ${currentPage === "inventory" ? "active" : ""}" onclick="window.App.navigate('inventory')">
         <i data-lucide="boxes"></i> <span>Dashboard Inventaris Sekolah</span>
