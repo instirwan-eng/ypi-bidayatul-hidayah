@@ -4199,21 +4199,6 @@ Topik / Materi: [ISI TOPIK]`;
               <i data-lucide="log-in"></i> Masuk sebagai ${state.loginRole === "guru" ? "Guru" : "Siswa"}
             </button>
           </form>
-
-          <div class="demo-box">
-            <strong>Akun Demo Siap Pakai:</strong>
-            <div class="demo-grid">
-              <button type="button" class="demo-chip" onclick="window.ExamModule.quickFillLogin('guru','guru','guru123')">
-                <span>Guru</span><code>guru / guru123</code>
-              </button>
-              <button type="button" class="demo-chip" onclick="window.ExamModule.quickFillLogin('siswa','siswa1','siswa123')">
-                <span>Siswa (Ahmad Kls 12)</span><code>siswa1 / siswa123</code>
-              </button>
-              <button type="button" class="demo-chip" onclick="window.ExamModule.quickFillLogin('siswa','siswa2','siswa123')">
-                <span>Siswa (Siti Kls 12)</span><code>siswa2 / siswa123</code>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     `;
