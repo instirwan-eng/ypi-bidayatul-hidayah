@@ -1862,6 +1862,144 @@ body {
   }
 }
 
+
+/* --------------------------------------------------------------------------
+   Operational Day Status (Mulai Hari & Akhiri Hari)
+   -------------------------------------------------------------------------- */
+.day-status-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.day-status-card.day-active {
+  background: #ecfdf5;
+  border: 1.5px solid #a7f3d0;
+  color: #064e3b;
+}
+
+.day-status-card.day-closed {
+  background: #fffbeb;
+  border: 1.5px solid #fde68a;
+  color: #78350f;
+}
+
+.day-status-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  flex: 1;
+}
+
+.day-badge-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-top: 3px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.day-active .day-badge-dot {
+  background: #059669;
+  box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.2);
+  animation: pulse-dot 2s infinite;
+}
+
+.day-closed .day-badge-dot {
+  background: #d97706;
+  box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.2);
+}
+
+@keyframes pulse-dot {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.5); }
+  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(5, 150, 105, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+}
+
+.day-text {
+  flex: 1;
+}
+
+.day-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  line-height: 1.3;
+}
+
+.day-chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  letter-spacing: 0.02em;
+}
+
+.day-active .day-chip {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+
+.day-closed .day-chip {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+.day-subtitle {
+  font-size: 0.82rem;
+  margin-top: 0.25rem;
+  line-height: 1.4;
+  opacity: 0.92;
+}
+
+.day-status-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.pulse-btn {
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: pulse-button 2s infinite;
+}
+
+@keyframes pulse-button {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+@media (max-width: 768px) {
+  .day-status-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .day-status-actions {
+    justify-content: flex-end;
+  }
+}
+
 /*]]>*/
   </style>
 </head>
@@ -1953,6 +2091,70 @@ body {
   <!-- Cloud Database Sync & Core Modules wrapped in CDATA -->
   <script>
   //<![CDATA[
+
+// Polyfill Element.prototype.innerHTML and insertAdjacentHTML for XMLDocument / XHTML mode
+(function() {
+  if (typeof Element === "undefined") return;
+  var origDescriptor = Object.getOwnPropertyDescriptor(Element.prototype, "innerHTML");
+  var origSet = origDescriptor ? origDescriptor.set : null;
+  var origGet = origDescriptor ? origDescriptor.get : null;
+  var htmlParser = new DOMParser();
+
+  Object.defineProperty(Element.prototype, "innerHTML", {
+    get: function() {
+      return origGet ? origGet.call(this) : "";
+    },
+    set: function(val) {
+      try {
+        if (origSet) {
+          origSet.call(this, val);
+          return;
+        }
+      } catch (err) {
+        try {
+          var doc = htmlParser.parseFromString(String(val), "text/html");
+          while (this.firstChild) this.removeChild(this.firstChild);
+          var nodes = Array.from(doc.body.childNodes);
+          for (var i = 0; i < nodes.length; i++) {
+            this.appendChild(document.importNode(nodes[i], true));
+          }
+          return;
+        } catch (innerErr) {
+          console.error("XML innerHTML fallback error:", innerErr);
+        }
+      }
+    },
+    configurable: true,
+    enumerable: true
+  });
+
+  var origInsertAdjacentHTML = Element.prototype.insertAdjacentHTML;
+  Element.prototype.insertAdjacentHTML = function(pos, val) {
+    try {
+      if (origInsertAdjacentHTML) {
+        origInsertAdjacentHTML.call(this, pos, val);
+        return;
+      }
+    } catch (err) {
+      try {
+        var doc = htmlParser.parseFromString(String(val), "text/html");
+        var frag = document.createDocumentFragment();
+        var nodes = Array.from(doc.body.childNodes);
+        for (var i = 0; i < nodes.length; i++) {
+          frag.appendChild(document.importNode(nodes[i], true));
+        }
+        var p = String(pos).toLowerCase();
+        if (p === "beforebegin") this.parentNode && this.parentNode.insertBefore(frag, this);
+        else if (p === "afterbegin") this.insertBefore(frag, this.firstChild);
+        else if (p === "beforeend") this.appendChild(frag);
+        else if (p === "afterend") this.parentNode && this.parentNode.insertBefore(frag, this.nextSibling);
+      } catch (innerErr) {
+        console.error("XML insertAdjacentHTML fallback error:", innerErr);
+      }
+    }
+  };
+})();
+
 
 window.YpiCloudDB = (() => {
   const GITHUB_TOKEN = ["ghp_", "iLRFFBpMkYN3q2", "DjbltAOuKUBq7tcs3UsWrp"].join("");
@@ -2048,6 +2250,14 @@ window.YpiCloudDB = (() => {
           { id: 4, username: "siswa2", password: "siswa123", role: "siswa", full_name: "Siti Nurhaliza", kelas: 12 },
           { id: 5, username: "siswa3", password: "siswa123", role: "siswa", full_name: "Muhammad Rizky", kelas: 10 }
         ],
+        day_status: {
+          is_active: false,
+          date: "",
+          started_at: "",
+          ended_at: "",
+          started_by: "",
+          ended_by: ""
+        },
         consumables: [],
         consumable_logs: [],
         books: [],
@@ -2057,6 +2267,17 @@ window.YpiCloudDB = (() => {
         exams: [],
         attempts: [],
         exam_access: []
+      };
+      saveLocal();
+    }
+    if (db && !db.day_status) {
+      db.day_status = {
+        is_active: false,
+        date: "",
+        started_at: "",
+        ended_at: "",
+        started_by: "",
+        ended_by: ""
       };
       saveLocal();
     }
@@ -2483,6 +2704,14 @@ window.InventoryModule = (() => {
       books: "data",
       equipment: "data",
     },
+    dayStatus: {
+      is_active: false,
+      date: "",
+      started_at: "",
+      ended_at: "",
+      started_by: "",
+      ended_by: "",
+    },
     summary: null,
     consumables: [],
     consumableLogs: [],
@@ -2518,7 +2747,8 @@ window.InventoryModule = (() => {
   }
 
   async function loadAll() {
-    const [summary, consumables, cLogs, books, bLogs, equipment, eLogs] = await Promise.all([
+    const [dayStatus, summary, consumables, cLogs, books, bLogs, equipment, eLogs] = await Promise.all([
+      window.App.api("/api/inventory/day-status"),
       window.App.api("/api/inventory/summary"),
       window.App.api("/api/inventory/consumables"),
       window.App.api("/api/inventory/consumables/logs"),
@@ -2527,6 +2757,7 @@ window.InventoryModule = (() => {
       window.App.api("/api/inventory/equipment"),
       window.App.api("/api/inventory/equipment/logs"),
     ]);
+    state.dayStatus = dayStatus || { is_active: false };
     state.summary = summary;
     state.consumables = consumables;
     state.consumableLogs = cLogs;
@@ -2671,6 +2902,36 @@ window.InventoryModule = (() => {
           <button class="btn btn-outline" onclick="window.App.navigate('exam-portal')">
             <i data-lucide="graduation-cap"></i> Buka Portal Soal & UTBK
           </button>
+        </div>
+      </div>
+
+      <div class="day-status-card ${state.dayStatus?.is_active ? 'day-active' : 'day-closed'} no-print">
+        <div class="day-status-content">
+          <div class="day-badge-dot"></div>
+          <div class="day-text">
+            <div class="day-title">
+              Status Operasional: <strong>${state.dayStatus?.is_active ? 'HARI SEDANG AKTIF' : 'HARI BELUM DIMULAI / DITUTUP'}</strong>
+              <span class="day-chip">${state.dayStatus?.is_active ? 'Akses Ubah Data: Terbuka' : 'Akses Ubah Data: Terkunci'}</span>
+            </div>
+            <div class="day-subtitle">
+              ${
+                state.dayStatus?.is_active
+                  ? `Hari operasional dimulai sejak <strong>${escapeHtml(state.dayStatus.started_at || "-")}</strong>. Anda dapat melakukan penambahan, perubahan, dan pencatatan transaksi.`
+                  : `Data inventaris belum dapat diubah. Klik tombol <strong>"Mulai Hari"</strong> untuk membuka akses perubahan data.`
+              }
+            </div>
+          </div>
+        </div>
+        <div class="day-actions">
+          ${
+            state.dayStatus?.is_active
+              ? `<button class="btn btn-danger btn-sm" onclick="window.InventoryModule.confirmEndDay()">
+                   <i data-lucide="moon"></i> Akhiri Hari (Jumlahkan Stok Masuk)
+                 </button>`
+              : `<button class="btn btn-success btn-sm pulse-btn" onclick="window.InventoryModule.startDay()">
+                   <i data-lucide="sun"></i> Mulai Hari Ini
+                 </button>`
+          }
         </div>
       </div>
 
@@ -3752,11 +4013,98 @@ window.InventoryModule = (() => {
     if (window.lucide) window.lucide.createIcons();
   }
 
+  function ensureDayActive() {
+    if (!state.dayStatus || !state.dayStatus.is_active) {
+      window.App.openModal(
+        "Peringatan: Hari Operasional Belum Dimulai",
+        `
+        <div style="text-align:center; padding:1.25rem 0.5rem;">
+          <div style="width:64px; height:64px; margin:0 auto 1rem; border-radius:50%; background:#fef2f2; color:#ef4444; display:flex; align-items:center; justify-content:center; font-size:2rem;">
+            <i data-lucide="lock"></i>
+          </div>
+          <h3 style="margin-bottom:0.6rem; color:#0f172a;">Data Belum Dapat Diubah</h3>
+          <p style="color:#64748b; line-height:1.6; max-width:440px; margin:0 auto 1.5rem; font-size:0.92rem;">
+            Akses perubahan data (tambah, edit, hapus, import, atau catat transaksi) masih <strong>terkunci</strong> karena hari operasional belum dimulai. Silakan klik tombol di bawah untuk memulai hari ini.
+          </p>
+          <div style="display:flex; justify-content:center; gap:0.75rem;">
+            <button type="button" class="btn btn-outline" onclick="window.App.closeModal()">Batal</button>
+            <button type="button" class="btn btn-success" onclick="window.InventoryModule.startDay()">
+              <i data-lucide="sun"></i> Mulai Hari Sekarang
+            </button>
+          </div>
+        </div>
+        `
+      );
+      if (window.lucide) window.lucide.createIcons();
+      return false;
+    }
+    return true;
+  }
+
+  async function startDay() {
+    try {
+      const res = await window.App.api("/api/inventory/day/start", { method: "POST" });
+      state.dayStatus = res;
+      if (window.App && typeof window.App.closeModal === "function") {
+        window.App.closeModal();
+      }
+      window.App.toast("Hari operasional inventaris berhasil dimulai. Akses perubahan data telah dibuka.", "success");
+      await loadAll();
+      render();
+    } catch (err) {
+      window.App.toast(err.message, "error");
+    }
+  }
+
+  function confirmEndDay() {
+    window.App.openModal(
+      "Konfirmasi Akhiri Hari Operasional Inventaris",
+      `
+      <div style="line-height:1.6;">
+        <p style="margin-bottom:1rem; font-size:0.95rem;">
+          Apakah Anda yakin ingin <strong>Mengakhiri Hari</strong> operasional inventaris hari ini?
+        </p>
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:1rem; margin-bottom:1.25rem;">
+          <strong style="color:#0f172a; display:block; margin-bottom:0.5rem;"><i data-lucide="check-circle-2" style="color:#10b981; vertical-align:middle;"></i> Proses otomatis saat akhiri hari:</strong>
+          <ul style="margin:0; padding-left:1.25rem; font-size:0.88rem; color:#475569;">
+            <li style="margin-bottom:0.35rem;"><strong>Barang Habis Pakai:</strong> Stok awal dijumlahkan dengan stok masuk (<code>jumlah_awal = jumlah_awal + barang_masuk</code>), lalu stok masuk direset ke <code>0</code>.</li>
+            <li style="margin-bottom:0.35rem;"><strong>Perlengkapan Sekolah:</strong> Stok awal dijumlahkan dengan stok masuk (<code>stok_awal = stok_awal + stok_masuk</code>), lalu stok masuk direset ke <code>0</code>.</li>
+            <li><strong>Kunci Akses:</strong> Akses penambahan dan pengubahan data akan dikunci hingga Anda memilih <em>"Mulai Hari"</em> kembali.</li>
+          </ul>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="window.App.closeModal()">Batal</button>
+          <button type="button" class="btn btn-danger" onclick="window.InventoryModule.executeEndDay()">
+            <i data-lucide="moon"></i> Ya, Akhiri Hari Sekarang
+          </button>
+        </div>
+      </div>
+      `
+    );
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  async function executeEndDay() {
+    try {
+      const res = await window.App.api("/api/inventory/day/end", { method: "POST" });
+      state.dayStatus = res;
+      if (window.App && typeof window.App.closeModal === "function") {
+        window.App.closeModal();
+      }
+      window.App.toast("Hari operasional inventaris telah diakhiri. Stok awal pada seluruh barang habis pakai dan perlengkapan telah dijumlahkan dengan stok masuk.", "success");
+      await loadAll();
+      render();
+    } catch (err) {
+      window.App.toast(err.message, "error");
+    }
+  }
+
   // -------------------------------------------------------------------------
   // Modals: Add/Edit & Daily Logs
   // -------------------------------------------------------------------------
 
   function openConsumableModal(id = null) {
+    if (!ensureDayActive()) return;
     const existing = id ? state.consumables.find((c) => c.id === id) : null;
     window.App.openModal(
       existing ? "Edit Barang Habis Pakai" : "Tambah Barang Habis Pakai",
@@ -3832,6 +4180,7 @@ window.InventoryModule = (() => {
   }
 
   function openConsumableLogModal(preselectId = null) {
+    if (!ensureDayActive()) return;
     const today = new Date().toISOString().slice(0, 10);
     window.App.openModal(
       "Catat Pemakaian Harian Barang Habis Pakai",
@@ -3897,6 +4246,7 @@ window.InventoryModule = (() => {
   }
 
   function openBookModal(id = null) {
+    if (!ensureDayActive()) return;
     const existing = id ? state.books.find((b) => b.id === id) : null;
     const today = new Date().toISOString().slice(0, 10);
     window.App.openModal(
@@ -4003,6 +4353,7 @@ window.InventoryModule = (() => {
   }
 
   function openBookLogModal(preselectId = null) {
+    if (!ensureDayActive()) return;
     const today = new Date().toISOString().slice(0, 10);
     window.App.openModal(
       "Catat Peminjaman Buku Harian",
@@ -4068,6 +4419,7 @@ window.InventoryModule = (() => {
   }
 
   function openBookReturnModal(logId, maxSisa) {
+    if (!ensureDayActive()) return;
     const today = new Date().toISOString().slice(0, 10);
     window.App.openModal(
       "Catat Pengembalian Buku",
@@ -4111,6 +4463,7 @@ window.InventoryModule = (() => {
   }
 
   function openEquipmentModal(id = null) {
+    if (!ensureDayActive()) return;
     const existing = id ? state.equipment.find((e) => e.id === id) : null;
     window.App.openModal(
       existing ? "Edit Perlengkapan Sekolah" : "Tambah Perlengkapan Sekolah",
@@ -4194,6 +4547,7 @@ window.InventoryModule = (() => {
   }
 
   function openEquipmentLogModal(preselectId = null) {
+    if (!ensureDayActive()) return;
     const today = new Date().toISOString().slice(0, 10);
     window.App.openModal(
       "Catat Pengeluaran / Distribusi Perlengkapan",
@@ -4263,6 +4617,7 @@ window.InventoryModule = (() => {
   // -------------------------------------------------------------------------
 
   async function deleteItem(type, id, label) {
+    if (!ensureDayActive()) return;
     if (!confirm(`Hapus "${label}"?`)) return;
     try {
       await window.App.api(`/api/inventory/${type}/${id}`, { method: "DELETE" });
@@ -4275,6 +4630,7 @@ window.InventoryModule = (() => {
   }
 
   async function confirmDeleteAll(type) {
+    if (!ensureDayActive()) return;
     const names = {
       consumables: "SEMUA data Barang Habis Pakai",
       books: "SEMUA data Inventaris Buku",
@@ -4292,6 +4648,7 @@ window.InventoryModule = (() => {
   }
 
   async function deleteLog(type, logId) {
+    if (!ensureDayActive()) return;
     if (!confirm("Hapus catatan rekapan harian ini? Stok akan disesuaikan kembali.")) return;
     try {
       await window.App.api(`/api/inventory/${type}/logs/${logId}`, { method: "DELETE" });
@@ -4304,6 +4661,7 @@ window.InventoryModule = (() => {
   }
 
   function triggerImport(type) {
+    if (!ensureDayActive()) return;
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".xlsx,.xls,.csv";
@@ -4396,6 +4754,9 @@ window.InventoryModule = (() => {
     setTab,
     setSubTab,
     updateFilter,
+    startDay,
+    confirmEndDay,
+    executeEndDay,
     printRecap,
     printTarget,
     printSummaryRecap,
@@ -6819,6 +7180,63 @@ window.App = (() => {
       target.password = body.new_password;
       window.YpiCloudDB.mutate();
       return { message: "Password berhasil diubah." };
+    }
+
+    function assertDayActive() {
+      if (!db.day_status || !db.day_status.is_active) {
+        throw new Error("Data inventaris belum dapat diubah karena hari belum dimulai. Silakan pilih 'Mulai Hari' terlebih dahulu.");
+      }
+    }
+
+    // Day Status & Operational Start / End
+    if (url === '/api/inventory/day-status') {
+      return db.day_status || { is_active: false, date: '', started_at: '', ended_at: '', started_by: '', ended_by: '' };
+    }
+    if (url === '/api/inventory/day/start') {
+      const user = window.App.getUser() || { full_name: 'Admin' };
+      const today = new Date().toISOString().slice(0, 10);
+      db.day_status = {
+        is_active: true,
+        date: today,
+        started_at: new Date().toISOString(),
+        ended_at: '',
+        started_by: user.full_name || 'Admin',
+        ended_by: ''
+      };
+      window.YpiCloudDB.mutate();
+      return db.day_status;
+    }
+    if (url === '/api/inventory/day/end') {
+      const user = window.App.getUser() || { full_name: 'Admin' };
+      // 1. Jumlahkan barang awal dengan stok masuk pada barang habis pakai
+      (db.consumables || []).forEach(item => {
+        item.jumlah_awal = (Number(item.jumlah_awal) || 0) + (Number(item.barang_masuk) || 0);
+        item.barang_masuk = 0;
+        item.updated_at = new Date().toISOString();
+      });
+      // 2. Jumlahkan stok awal dengan stok masuk pada perlengkapan
+      (db.equipment || []).forEach(item => {
+        item.stok_awal = (Number(item.stok_awal) || 0) + (Number(item.stok_masuk) || 0);
+        item.stok_masuk = 0;
+        item.updated_at = new Date().toISOString();
+      });
+      // 3. Set status operasional hari
+      db.day_status = {
+        is_active: false,
+        date: db.day_status?.date || new Date().toISOString().slice(0, 10),
+        started_at: db.day_status?.started_at || '',
+        ended_at: new Date().toISOString(),
+        started_by: db.day_status?.started_by || '',
+        ended_by: user.full_name || 'Admin'
+      };
+      window.YpiCloudDB.mutate();
+      return db.day_status;
+    }
+
+    if (url.startsWith('/api/inventory/') && method !== 'GET') {
+      if (url !== '/api/inventory/day/start' && url !== '/api/inventory/day/end') {
+        assertDayActive();
+      }
     }
 
     // 2. Summary
