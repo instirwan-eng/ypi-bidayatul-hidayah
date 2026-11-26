@@ -2240,7 +2240,6 @@ window.YpiCloudDB = (() => {
 
   async function init() {
     db = loadLocal();
-    await fetchGitHub();
     if (!db) {
       db = {
         users: [
@@ -2281,6 +2280,21 @@ window.YpiCloudDB = (() => {
       };
       saveLocal();
     }
+    try {
+      await fetchGitHub();
+    } catch (_) {}
+    if (db && !db.day_status) {
+      db.day_status = {
+        is_active: false,
+        date: "",
+        started_at: "",
+        ended_at: "",
+        started_by: "",
+        ended_by: ""
+      };
+      saveLocal();
+    }
+    return db;
   }
 
   function mutate() {
