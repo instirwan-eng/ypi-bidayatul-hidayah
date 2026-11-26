@@ -2909,7 +2909,6 @@ window.InventoryModule = (() => {
       </div>
       </div>
     `;
-    `;
   }
 
   function renderAdminPassword() {
