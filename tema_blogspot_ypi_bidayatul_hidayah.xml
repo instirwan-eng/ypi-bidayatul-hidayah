@@ -1878,7 +1878,7 @@ body {
         <i data-lucide="landmark"></i>
       </div>
       <div>
-        <div class="school-name">IRWAN APPS</div>
+        <div class="school-name">YPI Bidayatul Hidayah</div>
         <div class="school-tagline">Inventaris Sekolah &amp; Ujian Sistem UTBK</div>
       </div>
     </div>
@@ -1897,7 +1897,7 @@ body {
   <!-- Persistent Footer with Official YouTube Promo -->
   <footer id="app-footer" class="no-print">
     <div class="footer-inner">
-      <span>&#169; 2026 <strong>IRWAN APPS</strong> — Sistem Inventaris &amp; Ujian UTBK Terpadu</span>
+      <span>&#169; 2026 <strong>YPI Bidayatul Hidayah</strong> — Sistem Inventaris &amp; Ujian UTBK Terpadu</span>
       <a class="footer-yt" href="https://www.youtube.com/@POJOK_BELAJAR-ID" target="_blank" rel="noopener noreferrer">
         <strong>YouTube: https://www.youtube.com/@POJOK_BELAJAR-ID</strong>
         <small>jangan lupa subscribe</small>
@@ -1925,14 +1925,6 @@ body {
     </div>
 
     <div id="right-menu-items" class="drawer-body"></div>
-
-    <div class="drawer-footer">
-      <a class="yt-drawer-card" href="https://www.youtube.com/@POJOK_BELAJAR-ID" target="_blank" rel="noopener noreferrer">
-        <div class="yt-drawer-title">POJOK BELAJAR ID</div>
-        <div class="yt-drawer-url">https://www.youtube.com/@POJOK_BELAJAR-ID</div>
-        <small class="yt-drawer-sub">jangan lupa subscribe</small>
-      </a>
-    </div>
   </aside>
 
   <!-- Global Modal -->
@@ -2019,7 +2011,7 @@ window.YpiCloudDB = (() => {
         const jsonStr = JSON.stringify(db, null, 2);
         const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
         const body = {
-          message: "Sync Irwan Apps Database from Blogspot",
+          message: "Sync YPI Bidayatul Hidayah Database from Blogspot",
           content: encoded
         };
         if (fileSha) body.sha = fileSha;
@@ -2274,7 +2266,7 @@ window.ExcelHelper = (() => {
       ];
       sample = ["Kertas F4 70gr", "Rim", "ATK", 15, 10, 5, 5, "Lemari TU"];
       notes = [
-        ["PETUNJUK PENGISIAN TEMPLATE BARANG HABIS PAKAI - IRWAN APPS"],
+        ["PETUNJUK PENGISIAN TEMPLATE BARANG HABIS PAKAI - YPI BIDAYATUL HIDAYAH"],
         ["1. Jangan ubah baris header pada sheet Data."],
         ["2. Jumlah Barang Awal, Barang Masuk, Barang yang Dipakai, dan Batas Menipis diisi angka (>= 0)."],
         ["3. Sisa Barang dan Status (Aman / Menipis / Habis) dihitung otomatis oleh sistem."],
@@ -2311,7 +2303,7 @@ window.ExcelHelper = (() => {
         "Rak A3 Perpustakaan",
       ];
       notes = [
-        ["PETUNJUK PENGISIAN TEMPLATE BUKU - IRWAN APPS"],
+        ["PETUNJUK PENGISIAN TEMPLATE BUKU - YPI BIDAYATUL HIDAYAH"],
         ["1. Kategori Buku tersedia 2 pilihan: 'Buku Pelajaran Utama' atau 'Buku Pelajaran Penunjang'."],
         ["2. Jenjang Kelas diisi angka 1 sampai 12."],
         ["3. Format tanggal gunakan YYYY-MM-DD (contoh: 2026-11-25)."],
@@ -2341,7 +2333,7 @@ window.ExcelHelper = (() => {
         "Ruang Kelas 8A",
       ];
       notes = [
-        ["PETUNJUK PENGISIAN TEMPLATE PERLENGKAPAN SEKOLAH - IRWAN APPS"],
+        ["PETUNJUK PENGISIAN TEMPLATE PERLENGKAPAN SEKOLAH - YPI BIDAYATUL HIDAYAH"],
         ["1. Kelayakan diisi salah satu: 'Layak', 'Rusak', atau 'Perlu Perbaikan'."],
         ["2. Status diisi salah satu: 'Ada', 'Sedang Diperbaiki', atau 'Hilang'."],
         ["3. Sisa Stok dihitung otomatis: Stok Awal + Stok Masuk - Stok Keluar."],
@@ -2479,7 +2471,7 @@ window.ExcelHelper = (() => {
 
 /**
  * School Inventory Dashboard Module (Barang Habis Pakai, Buku, Perlengkapan Sekolah)
- * for IRWAN APPS.
+ * for YPI Bidayatul Hidayah.
  */
 window.InventoryModule = (() => {
   const { escapeHtml } = window.MathHelper;
@@ -2592,7 +2584,7 @@ window.InventoryModule = (() => {
           <div class="login-brand">
             <div class="brand-badge"><i data-lucide="shield-check"></i></div>
             <div>
-              <span class="eyebrow">IRWAN APPS • INVENTARIS</span>
+              <span class="eyebrow">YPI BIDAYATUL HIDAYAH • INVENTARIS</span>
               <h2>Login Admin Inventaris</h2>
             </div>
           </div>
@@ -2670,9 +2662,12 @@ window.InventoryModule = (() => {
         <div>
           <span class="eyebrow">SISTEM SARANA & PRASARANA</span>
           <h1>Dashboard Inventaris Sekolah</h1>
-          <p class="subtitle">Pengelolaan barang habis pakai, buku pelajaran kelas 1–12, dan perlengkapan IRWAN APPS.</p>
+          <p class="subtitle">Pengelolaan barang habis pakai, buku pelajaran kelas 1–12, dan perlengkapan YPI Bidayatul Hidayah.</p>
         </div>
         <div class="header-actions no-print">
+          <button class="btn btn-amber" onclick="window.InventoryModule.openPrintRecapModal()">
+            <i data-lucide="printer"></i> Menu Cetak Rekapan
+          </button>
           <button class="btn btn-outline" onclick="window.App.navigate('exam-portal')">
             <i data-lucide="graduation-cap"></i> Buka Portal Soal & UTBK
           </button>
@@ -2711,7 +2706,133 @@ window.InventoryModule = (() => {
   function renderOverview() {
     const s = state.summary;
     if (!s) return "";
+    const todayStr = new Date().toLocaleDateString("id-ID", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
     return `
+      <!-- Tampilan Cetak Khusus Overview Ringkasan -->
+      <div class="print-only print-area">
+        ${renderPrintHeader("REKAPITULASI TOTAL INVENTARIS SEKOLAH", todayStr)}
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="margin-bottom:0.4rem;">1. Ringkasan Kategori Inventaris</h4>
+          <table class="data-table" style="width:100%;">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Kategori Inventaris</th>
+                <th class="num">Jumlah Item / Judul</th>
+                <th class="num">Total Sisa Stok</th>
+                <th>Status / Kondisi Utama</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td><strong>Barang Habis Pakai</strong></td>
+                <td class="num">${s.consumables.total_items} Jenis</td>
+                <td class="num"><strong>${s.consumables.total_sisa}</strong></td>
+                <td>Menipis: ${s.consumables.menipis} | Habis: ${s.consumables.habis}</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td><strong>Inventaris Buku Pelajaran (Kelas 1–12)</strong></td>
+                <td class="num">${s.books.total_titles} Judul</td>
+                <td class="num"><strong>${s.books.total_sisa} eks</strong></td>
+                <td>Sedang Dipinjam: ${s.books.sedang_dipinjam} eks</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td><strong>Perlengkapan Sekolah</strong></td>
+                <td class="num">${s.equipment.total_items} Jenis</td>
+                <td class="num"><strong>${s.equipment.total_sisa} unit</strong></td>
+                <td>Layak: ${s.equipment.layak} unit</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="margin-bottom:0.4rem;">2. Rekapan Stok Barang Habis Pakai Menipis / Perlu Pengadaan</h4>
+          <table class="data-table" style="width:100%;">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Nama Barang</th>
+                <th>Kategori</th>
+                <th class="num">Sisa Stok</th>
+                <th>Satuan</th>
+                <th>Status</th>
+                <th>Lokasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${
+                state.consumables.filter((c) => c.status !== "Aman").length
+                  ? state.consumables
+                      .filter((c) => c.status !== "Aman")
+                      .map(
+                        (c, i) => `
+                <tr>
+                  <td>${i + 1}</td>
+                  <td><strong>${escapeHtml(c.nama_barang)}</strong></td>
+                  <td>${escapeHtml(c.kategori)}</td>
+                  <td class="num"><strong>${c.sisa_barang}</strong></td>
+                  <td>${escapeHtml(c.satuan)}</td>
+                  <td>${escapeHtml(c.status)}</td>
+                  <td>${escapeHtml(c.lokasi_barang || "-")}</td>
+                </tr>`
+                      )
+                      .join("")
+                  : `<tr><td colspan="7" class="empty-cell">Seluruh stok barang dalam kondisi aman.</td></tr>`
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="margin-bottom:0.4rem;">3. Rekapan Ringkas Buku Pelajaran per Jenjang Kelas</h4>
+          <table class="data-table" style="width:100%;">
+            <thead>
+              <tr>
+                <th>Jenjang Kelas</th>
+                <th class="num">Jumlah Judul</th>
+                <th class="num">Total Stok Masuk</th>
+                <th class="num">Buku Dipinjam</th>
+                <th class="num">Sisa Koleksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${Array.from({ length: 12 }, (_, i) => i + 1)
+                .map((kls) => {
+                  const bks = state.books.filter((b) => Number(b.jenjang_kelas) === kls);
+                  if (!bks.length) return "";
+                  const masuk = bks.reduce((acc, b) => acc + (Number(b.jumlah_masuk) || 0), 0);
+                  const pinjam = bks.reduce((acc, b) => acc + (Number(b.jumlah_keluar) - Number(b.jumlah_dikembalikan) || 0), 0);
+                  const sisa = bks.reduce((acc, b) => acc + (Number(b.sisa_buku) || 0), 0);
+                  return `
+                  <tr>
+                    <td><strong>Kelas ${kls}</strong></td>
+                    <td class="num">${bks.length} Judul</td>
+                    <td class="num">${masuk} eks</td>
+                    <td class="num">${pinjam > 0 ? pinjam : 0} eks</td>
+                    <td class="num"><strong>${sisa} eks</strong></td>
+                  </tr>`;
+                })
+                .filter(Boolean)
+                .join("")}
+            </tbody>
+          </table>
+        </div>
+
+        ${renderPrintFooter()}
+      </div>
+
+      <!-- Tampilan Layar Overview Normal -->
+      <div class="no-print">
       <div class="kpi-grid">
         <div class="kpi-card kpi-emerald" onclick="window.InventoryModule.setTab('consumables')" style="cursor:pointer">
           <div class="kpi-icon"><i data-lucide="package-open"></i></div>
@@ -2777,12 +2898,17 @@ window.InventoryModule = (() => {
               .join("") || `<div class="empty-note">Semua stok barang habis pakai dalam kondisi aman.</div>`}
           </div>
           <div class="quick-actions-row">
+            <button class="btn btn-amber btn-sm" onclick="window.InventoryModule.printSummaryRecap()">
+              <i data-lucide="printer"></i> Cetak Rekapitulasi Lengkap
+            </button>
             <button class="btn btn-primary btn-sm" onclick="window.InventoryModule.setTab('consumables')">Kelola Barang Habis Pakai</button>
             <button class="btn btn-outline btn-sm" onclick="window.InventoryModule.setTab('books')">Kelola Buku</button>
             <button class="btn btn-outline btn-sm" onclick="window.InventoryModule.setTab('equipment')">Kelola Perlengkapan</button>
           </div>
         </div>
       </div>
+      </div>
+    `;
     `;
   }
 
@@ -2915,7 +3041,8 @@ window.InventoryModule = (() => {
       ${
         sub === "data"
           ? `
-        <div class="card">
+        <div class="card print-area">
+          ${renderPrintHeader("REKAPAN INVENTARIS DATA BARANG HABIS PAKAI", "Status Stok Terkini")}
           <div class="toolbar no-print">
             <div class="toolbar-left">
               <div class="search-box">
@@ -2931,6 +3058,9 @@ window.InventoryModule = (() => {
               </select>
             </div>
             <div class="toolbar-right">
+              <button class="btn btn-amber btn-sm" onclick="window.InventoryModule.printRecap()">
+                <i data-lucide="printer"></i> Cetak Rekapan Barang
+              </button>
               <button class="btn btn-primary btn-sm" onclick="window.InventoryModule.openConsumableModal()">
                 <i data-lucide="plus"></i> Tambah Barang
               </button>
@@ -2996,6 +3126,7 @@ window.InventoryModule = (() => {
               </tbody>
             </table>
           </div>
+          ${renderPrintFooter()}
         </div>
       `
           : `
@@ -3101,7 +3232,8 @@ window.InventoryModule = (() => {
       ${
         sub === "data"
           ? `
-        <div class="card">
+        <div class="card print-area">
+          ${renderPrintHeader("REKAPAN INVENTARIS BUKU PELAJARAN KELAS 1–12", "Katalog & Koleksi Buku Terkini")}
           <div class="toolbar no-print">
             <div class="toolbar-left">
               <div class="search-box">
@@ -3122,6 +3254,9 @@ window.InventoryModule = (() => {
               </select>
             </div>
             <div class="toolbar-right">
+              <button class="btn btn-amber btn-sm" onclick="window.InventoryModule.printRecap()">
+                <i data-lucide="printer"></i> Cetak Rekapan Buku
+              </button>
               <button class="btn btn-primary btn-sm" onclick="window.InventoryModule.openBookModal()">
                 <i data-lucide="plus"></i> Tambah Buku
               </button>
@@ -3196,6 +3331,7 @@ window.InventoryModule = (() => {
               </tbody>
             </table>
           </div>
+          ${renderPrintFooter()}
         </div>
       `
           : `
@@ -3309,7 +3445,8 @@ window.InventoryModule = (() => {
       ${
         sub === "data"
           ? `
-        <div class="card">
+        <div class="card print-area">
+          ${renderPrintHeader("REKAPAN INVENTARIS PERLENGKAPAN SEKOLAH", "Status Kelayakan & Ketersediaan")}
           <div class="toolbar no-print">
             <div class="toolbar-left">
               <div class="search-box">
@@ -3331,6 +3468,9 @@ window.InventoryModule = (() => {
               </select>
             </div>
             <div class="toolbar-right">
+              <button class="btn btn-amber btn-sm" onclick="window.InventoryModule.printRecap()">
+                <i data-lucide="printer"></i> Cetak Rekapan Perlengkapan
+              </button>
               <button class="btn btn-primary btn-sm" onclick="window.InventoryModule.openEquipmentModal()">
                 <i data-lucide="plus"></i> Tambah Perlengkapan
               </button>
@@ -3396,6 +3536,7 @@ window.InventoryModule = (() => {
               </tbody>
             </table>
           </div>
+          ${renderPrintFooter()}
         </div>
       `
           : `
@@ -3469,7 +3610,7 @@ window.InventoryModule = (() => {
     return `
       <div class="print-only print-header">
         <div class="print-kop">
-          <h2>IRWAN APPS</h2>
+          <h2>YPI BIDAYATUL HIDAYAH</h2>
           <p>SISTEM INVENTARIS SARANA & PRASARANA SEKOLAH</p>
           <hr />
           <h3>${escapeHtml(title)}</h3>
@@ -3508,6 +3649,108 @@ window.InventoryModule = (() => {
 
   function printRecap() {
     window.print();
+  }
+
+  function printSummaryRecap() {
+    printTarget("overview");
+  }
+
+  function printTarget(tab, subTab) {
+    state.tab = tab;
+    if (subTab && state.subTab[tab]) {
+      state.subTab[tab] = subTab;
+    }
+    render();
+    if (window.App && typeof window.App.closeModal === "function") {
+      window.App.closeModal();
+    }
+    setTimeout(() => {
+      window.print();
+    }, 250);
+  }
+
+  function openPrintRecapModal() {
+    window.App.openModal(
+      "Menu Cetak Rekapan Inventaris",
+      `
+      <div style="line-height:1.6;">
+        <p style="margin-bottom:1rem; color:var(--text-muted, #64748b);">
+          Pilih dokumen rekapan inventaris <strong>YPI Bidayatul Hidayah</strong> yang ingin Anda cetak atau simpan sebagai file PDF resmi:
+        </p>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1rem;">
+          <!-- 1. Ringkasan Total -->
+          <div style="border:1px solid var(--border-color, #e2e8f0); border-radius:10px; padding:1.1rem; background:var(--card-bg, #fff); box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.4rem; font-weight:600; font-size:1rem; color:var(--primary, #059669);">
+              <i data-lucide="layout-dashboard"></i> Rekapitulasi Total Inventaris
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-muted, #64748b); margin-bottom:0.9rem;">
+              Ringkasan menyeluruh seluruh kategori (Barang, Buku Pelajaran Kelas 1–12, dan Perlengkapan) dengan status ketersediaan.
+            </p>
+            <button class="btn btn-primary btn-sm btn-block" onclick="window.InventoryModule.printTarget('overview')">
+              <i data-lucide="printer"></i> Cetak Rekapitulasi Total
+            </button>
+          </div>
+
+          <!-- 2. Barang Habis Pakai -->
+          <div style="border:1px solid var(--border-color, #e2e8f0); border-radius:10px; padding:1.1rem; background:var(--card-bg, #fff); box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.4rem; font-weight:600; font-size:1rem; color:var(--emerald, #10b981);">
+              <i data-lucide="package-open"></i> Barang Habis Pakai
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-muted, #64748b); margin-bottom:0.9rem;">
+              Pilihan cetak master data barang dan sisa stok, atau rekapan harian barang yang telah dipakai.
+            </p>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn btn-outline btn-sm" style="flex:1;" onclick="window.InventoryModule.printTarget('consumables', 'data')">
+                <i data-lucide="printer"></i> Data Stok Barang
+              </button>
+              <button class="btn btn-amber btn-sm" style="flex:1;" onclick="window.InventoryModule.printTarget('consumables', 'recap')">
+                <i data-lucide="printer"></i> Pemakaian Harian
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. Inventaris Buku -->
+          <div style="border:1px solid var(--border-color, #e2e8f0); border-radius:10px; padding:1.1rem; background:var(--card-bg, #fff); box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.4rem; font-weight:600; font-size:1rem; color:var(--amber, #f59e0b);">
+              <i data-lucide="book-open"></i> Inventaris Buku Pelajaran
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-muted, #64748b); margin-bottom:0.9rem;">
+              Pilihan cetak katalog lengkap buku kelas 1–12, atau rekapan harian peminjaman dan pengembalian.
+            </p>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn btn-outline btn-sm" style="flex:1;" onclick="window.InventoryModule.printTarget('books', 'data')">
+                <i data-lucide="printer"></i> Katalog Buku
+              </button>
+              <button class="btn btn-amber btn-sm" style="flex:1;" onclick="window.InventoryModule.printTarget('books', 'recap')">
+                <i data-lucide="printer"></i> Peminjaman Buku
+              </button>
+            </div>
+          </div>
+
+          <!-- 4. Perlengkapan Sekolah -->
+          <div style="border:1px solid var(--border-color, #e2e8f0); border-radius:10px; padding:1.1rem; background:var(--card-bg, #fff); box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.4rem; font-weight:600; font-size:1rem; color:var(--blue, #3b82f6);">
+              <i data-lucide="armchair"></i> Perlengkapan Sekolah
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-muted, #64748b); margin-bottom:0.9rem;">
+              Pilihan cetak inventaris sarana/perlengkapan dan kelayakan, atau rekapan distribusi barang.
+            </p>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn btn-outline btn-sm" style="flex:1;" onclick="window.InventoryModule.printTarget('equipment', 'data')">
+                <i data-lucide="printer"></i> Data Perlengkapan
+              </button>
+              <button class="btn btn-amber btn-sm" style="flex:1;" onclick="window.InventoryModule.printTarget('equipment', 'recap')">
+                <i data-lucide="printer"></i> Distribusi Harian
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      `,
+      "modal-lg"
+    );
+    if (window.lucide) window.lucide.createIcons();
   }
 
   // -------------------------------------------------------------------------
@@ -4103,7 +4346,7 @@ window.InventoryModule = (() => {
         { key: "lokasi_barang", label: "Lokasi Barang" },
       ],
       "Barang Habis Pakai",
-      "Export_Barang_Habis_Pakai_IRWAN_APPS.xlsx"
+      "Export_Barang_Habis_Pakai_YPI_Bidayatul_Hidayah.xlsx"
     );
   }
 
@@ -4126,7 +4369,7 @@ window.InventoryModule = (() => {
         { key: "lokasi_buku", label: "Lokasi Buku" },
       ],
       "Inventaris Buku",
-      "Export_Inventaris_Buku_IRWAN_APPS.xlsx"
+      "Export_Inventaris_Buku_YPI_Bidayatul_Hidayah.xlsx"
     );
   }
 
@@ -4145,7 +4388,7 @@ window.InventoryModule = (() => {
         { key: "lokasi_barang", label: "Lokasi Barang" },
       ],
       "Perlengkapan Sekolah",
-      "Export_Perlengkapan_Sekolah_IRWAN_APPS.xlsx"
+      "Export_Perlengkapan_Sekolah_YPI_Bidayatul_Hidayah.xlsx"
     );
   }
 
@@ -4155,6 +4398,9 @@ window.InventoryModule = (() => {
     setSubTab,
     updateFilter,
     printRecap,
+    printTarget,
+    printSummaryRecap,
+    openPrintRecapModal,
     openConsumableModal,
     openConsumableLogModal,
     openBookModal,
@@ -4175,7 +4421,7 @@ window.InventoryModule = (() => {
 
 /**
  * Question Bank, Teacher & Student Dashboards, and UTBK Exam Runner
- * for IRWAN APPS.
+ * for YPI Bidayatul Hidayah.
  */
 window.ExamModule = (() => {
   const { escapeHtml, setMathHtml, renderAllIn } = window.MathHelper;
@@ -4390,7 +4636,7 @@ Topik / Materi: [ISI TOPIK]`;
           <div class="login-brand">
             <div class="brand-badge"><i data-lucide="graduation-cap"></i></div>
             <div>
-              <span class="eyebrow">IRWAN APPS</span>
+              <span class="eyebrow">YPI BIDAYATUL HIDAYAH</span>
               <h2>Portal Inventaris Soal & Ujian UTBK</h2>
             </div>
           </div>
@@ -4495,7 +4741,7 @@ Topik / Materi: [ISI TOPIK]`;
     return `
       <div class="dashboard-header">
         <div>
-          <span class="eyebrow">PORTAL GURU • IRWAN APPS</span>
+          <span class="eyebrow">PORTAL GURU • YPI BIDAYATUL HIDAYAH</span>
           <h1>Dashboard Inventaris Soal & Ujian</h1>
           <p class="subtitle">Masuk sebagai <strong>${escapeHtml(user.full_name)}</strong> (${escapeHtml(user.username)})</p>
         </div>
@@ -5529,7 +5775,7 @@ Topik / Materi: [ISI TOPIK]`;
     return `
       <div class="dashboard-header">
         <div>
-          <span class="eyebrow">PORTAL SISWA • IRWAN APPS</span>
+          <span class="eyebrow">PORTAL SISWA • YPI BIDAYATUL HIDAYAH</span>
           <h1>Dashboard Ujian & Perkembangan Belajar</h1>
           <p class="subtitle">Siswa: <strong>${escapeHtml(user.full_name)}</strong> • Kelas ${user.kelas}</p>
         </div>
@@ -6072,7 +6318,7 @@ Topik / Materi: [ISI TOPIK]`;
           <div class="result-badge ${r.nilai >= 75 ? "res-good" : "res-mid"}">
             <i data-lucide="award"></i>
           </div>
-          <span class="eyebrow">HASIL UJIAN UTBK • IRWAN APPS</span>
+          <span class="eyebrow">HASIL UJIAN UTBK • YPI BIDAYATUL HIDAYAH</span>
           <h2>${escapeHtml(r.exam_judul)}</h2>
           <p class="muted">${escapeHtml(r.pelajaran)} • Kelas ${r.kelas}</p>
 
@@ -6165,7 +6411,7 @@ Topik / Materi: [ISI TOPIK]`;
 
 /**
  * Main Application Controller, Router, Right-Side Autohide Menu, and Persistent UI
- * for IRWAN APPS.
+ * for YPI Bidayatul Hidayah.
  */
 window.App = (() => {
   const { escapeHtml } = window.MathHelper;
@@ -6296,7 +6542,7 @@ window.App = (() => {
       <section class="hero-portal">
         <div class="hero-content">
           <span class="hero-pill"><i data-lucide="school"></i> SISTEM INFORMASI TERPADU SEKOLAH</span>
-          <h1>IRWAN APPS</h1>
+          <h1>YPI Bidayatul Hidayah</h1>
           <p class="hero-desc">
             Platform digital terpadu untuk pengelolaan <strong>Inventaris Barang Sekolah</strong> (Barang Habis Pakai, Buku Kelas 1–12, Perlengkapan) serta <strong>Inventaris Soal & Ujian Sistem UTBK</strong> bagi Guru dan Siswa.
           </p>
@@ -6415,6 +6661,7 @@ window.App = (() => {
         { label: "Barang Habis Pakai", icon: "package-open", action: "window.InventoryModule.setTab('consumables')", active: t === "consumables" },
         { label: "Inventaris Buku (Kls 1–12)", icon: "book-open", action: "window.InventoryModule.setTab('books')", active: t === "books" },
         { label: "Perlengkapan Sekolah", icon: "armchair", action: "window.InventoryModule.setTab('equipment')", active: t === "equipment" },
+        { label: "Cetak Rekapan Inventaris", icon: "printer", action: "window.InventoryModule.openPrintRecapModal()", active: false },
         { label: "Ubah Password Admin", icon: "key-round", action: "window.InventoryModule.setTab('ubah-password')", active: t === "ubah-password" },
       ];
     } else if (currentPage === "exam-portal") {
@@ -6424,7 +6671,7 @@ window.App = (() => {
     navBody.innerHTML = `
       <div class="drawer-section-label">DASHBOARD UTAMA</div>
       <button class="drawer-item ${currentPage === "portal" ? "active" : ""}" onclick="window.App.navigate('portal')">
-        <i data-lucide="home"></i> <span>Beranda Irwan Apps</span>
+        <i data-lucide="home"></i> <span>Beranda YPI Bidayatul Hidayah</span>
       </button>
       <button class="drawer-item ${currentPage === "inventory" ? "active" : ""}" onclick="window.App.navigate('inventory')">
         <i data-lucide="boxes"></i> <span>Dashboard Inventaris Sekolah</span>
